@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Track Application</title>
+<style>
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(135deg,#0b3d91,#3498db);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+header{position:absolute;top:0;left:0;right:0;background:#0b3d91;color:white;padding:15px 30px;display:flex;justify-content:space-between;align-items:center;}
+header h2{margin:0;}
+nav a{color:white;text-decoration:none;margin-left:20px;font-weight:bold;}
+.track-box{background:white;padding:40px;border-radius:12px;width:360px;text-align:center;box-shadow:0 10px 25px rgba(0,0,0,0.3);}
+h3{color:#0b3d91;margin-bottom:20px;}
+input{width:90%;padding:12px;margin:15px 0;border:1px solid #ccc;border-radius:6px;font-size:15px;}
+button{background:#0b3d91;color:white;border:none;padding:12px;width:100%;border-radius:6px;font-size:16px;cursor:pointer;transition:0.3s;}
+button:hover{background:#08306b;}
+#result{margin-top:20px;font-size:15px;line-height:1.7;}
+.badge{display:inline-block;padding:5px 14px;border-radius:20px;font-weight:bold;font-size:14px;}
+.badge-Pending{background:#fff3cd;color:#856404;}
+.badge-Approved{background:#d4edda;color:#155724;}
+.badge-Rejected{background:#f8d7da;color:#721c24;}
+</style>
+</head>
+<body>
+
+<header>
+  <h2>Smart E-Governance Portal</h2>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="index.html#servicesPanel">Explore Services</a>
+    <a href="track.html">Track</a>
+    <a href="admin-login.html">Admin</a>
+  </nav>
+</header>
+
+<div class="track-box">
+  <h3>🔍 Track Application Status</h3>
+  <input id="appID" placeholder="Enter Application ID (e.g. GOV123456)">
+  <button onclick="checkStatus()">Check Status</button>
+  <div id="result"></div>
+</div>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+
+<script>
+async function checkStatus() {
+  const id = document.getElementById("appID").value.trim();
+  const resultDiv = document.getElementById("result");
+
+  if (!id) {
+    resultDiv.innerHTML = "<p style='color:red;'>Please enter an Application ID.</p>";
+    return;
+  }
+
+  resultDiv.innerHTML = "<p style='color:#0b3d91;'>Checking... please wait.</p>";
+
+  try {
+    const doc = await db.collection("applications").doc(id).get();
+
+    if (!doc.exists) {
+      resultDiv.innerHTML = "<p style='color:red;'>❌ Application not found. Please check your ID.</p>";
+      return;
+    }
+
+    const app = doc.data();
+
+    let html = `
+      <p><strong>Application ID:</strong> ${app.id}</p>
+      <p><strong>Name:</strong> ${app.name}</p>
+      <p><strong>Service:</strong> ${app.service}</p>
+      <p><strong>Status:</strong> <span class="badge badge-${app.status}">${app.status}</span></p>
+    `;
+
+    if (app.reason) {
+      html += `<p style='color:red;'><strong>Reason:</strong> ${app.reason}</p>`;
+    }
+
+    if (app.certificate) {
+      html += `<p><a href="${app.certificate}" download style="color:green;font-weight:bold;font-size:15px;">📥 Download Certificate</a></p>`;
+    }
+
+    resultDiv.innerHTML = html;
+
+  } catch (e) {
+    resultDiv.innerHTML = "<p style='color:red;'>Error: " + e.message + "</p>";
+  }
+}
+
+// Allow pressing Enter key
+document.getElementById("appID").addEventListener("keydown", e => {
+  if (e.key === "Enter") checkStatus();
+});
+</script>
+</body>
+</html>

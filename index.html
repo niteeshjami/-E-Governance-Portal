@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Smart E-Governance Service Portal</title>
+
+<link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg">
+
+<style>
+
+body{
+margin:0;
+padding-top:80px; /* space for fixed header */
+font-family:Arial, Helvetica, sans-serif;
+background:#f4f6fb;
+}
+
+/* HEADER */
+
+header{
+background:#0b3d91;
+color:white;
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:15px 40px;
+
+position:fixed;
+top:0;
+left:0;
+right:0;
+z-index:1000;
+}
+
+.logo{
+display:flex;
+align-items:center;
+gap:10px;
+}
+
+.logo img{
+height:45px;
+}
+
+nav a{
+color:white;
+text-decoration:none;
+margin:0 12px;
+font-weight:bold;
+}
+
+/* HERO */
+
+.hero{
+background:linear-gradient(120deg,#0b3d91,#1e88e5);
+color:white;
+text-align:center;
+padding:80px 30px;
+}
+
+.hero h2{
+font-size:38px;
+margin-bottom:10px;
+}
+
+.hero button{
+margin-top:20px;
+padding:12px 25px;
+border:none;
+background:white;
+color:#0b3d91;
+font-weight:bold;
+border-radius:6px;
+cursor:pointer;
+font-size:16px;
+}
+
+/* HOME FEATURE BOXES */
+
+.home-features{
+padding:50px 20px;
+background:#f4f6fb;
+text-align:center;
+}
+
+.feature-container{
+display:flex;
+justify-content:center;
+gap:25px;
+flex-wrap:wrap;
+margin-top:30px;
+}
+
+.feature-box{
+width:300px;
+background:white;
+border-radius:10px;
+box-shadow:0 4px 10px rgba(0,0,0,0.15);
+padding:15px;
+transition:0.3s;
+}
+
+.feature-box img{
+width:100%;
+height:200px;
+object-fit:cover;
+border-radius:8px;
+}
+
+.feature-box p{
+margin-top:10px;
+font-weight:bold;
+color:#0b3d91;
+font-size:14px;
+}
+
+.feature-box:hover{
+transform:translateY(-10px);
+box-shadow:0 8px 18px rgba(0,0,0,0.2);
+}
+
+/* SERVICES */
+
+#servicesPanel{
+padding:50px 20px;
+}
+
+.service-container{
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
+gap:25px;
+margin-top:30px;
+}
+
+.service-box{
+background:white;
+width:300px;
+padding:20px;
+border-radius:10px;
+box-shadow:0 4px 10px rgba(0,0,0,0.15);
+text-align:center;
+}
+
+.service-box h3{
+color:#0b3d91;
+}
+
+.service-box p{
+font-size:14px;
+}
+
+.service-box button{
+margin-top:10px;
+padding:8px 18px;
+border:none;
+background:#0b3d91;
+color:white;
+border-radius:5px;
+cursor:pointer;
+}
+
+/* FOOTER */
+
+footer{
+background:#0b3d91;
+color:white;
+text-align:center;
+padding:20px;
+margin-top:40px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<div class="logo">
+<img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg">
+<h2>Smart E-Governance Portal</h2>
+</div>
+
+<nav>
+<a href="index.html">Home</a>
+<a href="index.html#servicesPanel">Explore Services</a>
+<a href="track.html">Track</a>
+<a href="admin-login.html">Admin</a>
+<a href="#contact">Contact</a>
+</nav>
+
+</header>
+
+
+<section class="hero">
+
+<h2>Digital Government Services</h2>
+
+<p>Apply for certificates, licenses and public services easily through a single portal.</p>
+
+<button onclick="showServices()">Explore Services</button>
+
+</section>
+
+
+<section class="home-features">
+
+<h2>Digital Governance in India</h2>
+
+<div class="feature-container">
+
+<div class="feature-box">
+<img src="https://image2url.com/r2/default/images/1774982207981-7e695089-2e80-4977-961c-4327151e9b11.png">
+<p>Digital Document Vault</p>
+</div>
+
+<div class="feature-box">
+<img src="https://image2url.com/r2/default/images/1774780545074-a889b003-5b4c-4026-a647-f53ed018d588.jpg">
+<p>Online Citizen Services</p>
+</div>
+
+<div class="feature-box">
+<img src="https://image2url.com/r2/default/images/1774982421426-a610316b-e2fb-4ca9-99bb-aa477f4c2974.jpg">
+<p>Unified Identity/Login</p>
+</div>
+
+<div class="feature-box">
+<img src="https://image2url.com/r2/default/images/1774780781165-a393ed6d-3d0d-4433-a513-4d53d6220fd0.jpg">
+<p>Digital India Initiative</p>
+</div>
+
+</div>
+
+</section>
+
+
+<section id="servicesPanel" class="services">
+
+<h2 style="text-align:center;">Explore Government Services</h2>
+
+<div class="service-container">
+
+<div class="service-box">
+<h3>Birth Registration</h3>
+<p>Apply for birth certificates quickly through the online portal.</p>
+<button onclick="location.href='birth.html'">Apply Now</button>
+</div>
+
+<div class="service-box">
+<h3>Death Registration</h3>
+<p>Apply for death certificates quickly through the online portal.</p>
+<button onclick="location.href='death.html'">Apply Now</button>
+</div>
+
+
+<div class="service-box">
+<h3>Aadhaar Management</h3>
+<p>Update address, name, DOB or mobile number linked with Aadhaar.</p>
+<button onclick="location.href='aadhaar.html'">Apply Now</button>
+</div>
+
+<div class="service-box">
+<h3>Marriage Certification</h3>
+<p>Register marriages and receive official marriage certificates.</p>
+<button onclick="location.href='marriage.html'">Apply Now</button>
+</div>
+
+<div class="service-box">
+<h3>Passport Services</h3>
+<p>Apply for new passport or renew an existing passport.</p>
+<button onclick="location.href='passport.html'">Apply Now</button>
+</div>
+
+<div class="service-box">
+<h3>Community Services</h3>
+<p>Housing support, food security cards, and unemployment benefits.</p>
+<button onclick="location.href='community.html'">Apply Now</button>
+</div>
+
+<div class="service-box">
+<h3>Healthcare Services</h3>
+<p>Health insurance, vaccination booking and hospital services.</p>
+<button onclick="location.href='healthcare.html'">Apply Now</button>
+</div>
+
+<div class="service-box">
+<h3>Revenue & Taxation</h3>
+<p>Manage property tax, income tax and land record services.</p>
+<button onclick="location.href='tax.html'">Apply Now</button>
+</div>
+
+<div class="service-box">
+<h3>Education & Employment</h3>
+<p>Scholarships, college admissions and government job portals.</p>
+<button onclick="location.href='education.html'">Apply Now</button>
+</div>
+
+<div class="service-box">
+<h3>Certificates & Licenses</h3>
+<p>Income certificates, driving license, vehicle registration and business licenses.</p>
+<button onclick="location.href='license.html'">Apply Now</button>
+</div>
+
+</div>
+
+</section>
+
+<section id="contact" class="contact">
+
+<h2>Contact Us</h2>
+
+<div class="contact-container">
+
+<div class="contact-info">
+
+<h3>Government Service Helpdesk</h3>
+
+<p>📞 Phone: +91 1800 123 456</p>
+
+<p>📧 Email: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b1c2c4c1c1dec3c5f1d4d6dec7d4c3dfd0dfd2d49fd6dec79fd8df">[email&#160;protected]</a></p>
+
+<p>🏢 Address: Digital Governance Office, New Delhi, India</p>
+
+<p>🕒 Working Hours: Mon - Fri (9 AM - 6 PM)</p>
+
+</div>
+
+
+
+</div>
+
+</section>
+
+
+<footer>
+
+<p>© 2026 Smart E-Governance Service Portal</p>
+
+</footer>
+
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+
+
+
+function showServices(){
+document.getElementById("servicesPanel").style.d

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin Dashboard</title>
+<style>
+body{font-family:Arial,Helvetica,sans-serif;background:#f4f6fb;padding:0;margin:0;}
+header{background:#0b3d91;color:white;padding:15px 30px;display:flex;justify-content:space-between;align-items:center;}
+header h2{margin:0;}
+.logout{background:red;color:white;border:none;padding:8px 15px;cursor:pointer;border-radius:5px;font-size:14px;}
+.content{padding:30px;}
+.stats{display:flex;gap:20px;margin-bottom:30px;flex-wrap:wrap;}
+.stat-box{background:white;padding:20px 30px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.1);text-align:center;min-width:130px;}
+.stat-box h3{margin:0;font-size:28px;color:#0b3d91;}
+.stat-box p{margin:5px 0 0;color:#666;font-size:13px;}
+.filter-bar{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center;}
+.filter-bar select,.filter-bar input{padding:8px 12px;border:1px solid #ccc;border-radius:5px;font-size:14px;}
+#loading{text-align:center;padding:40px;color:#0b3d91;font-size:18px;}
+table{width:100%;border-collapse:collapse;background:white;box-shadow:0 0 10px rgba(0,0,0,0.1);border-radius:8px;overflow:hidden;}
+th{background:#0b3d91;color:white;padding:12px 10px;font-size:14px;}
+td{padding:10px;text-align:center;border-bottom:1px solid #eee;font-size:13px;}
+tr:last-child td{border-bottom:none;}
+.status-Pending{color:orange;font-weight:bold;}
+.status-Approved{color:green;font-weight:bold;}
+.status-Rejected{color:red;font-weight:bold;}
+.approve-btn{background:green;color:white;border:none;padding:5px 10px;cursor:pointer;border-radius:4px;font-size:12px;}
+.reject-btn{background:red;color:white;border:none;padding:5px 10px;cursor:pointer;border-radius:4px;font-size:12px;}
+.delete-btn{background:#555;color:white;border:none;padding:5px 10px;cursor:pointer;border-radius:4px;font-size:12px;}
+.cert-upload{font-size:11px;margin-top:5px;}
+.no-data{text-align:center;padding:40px;color:#999;}
+</style>
+</head>
+<body>
+
+<header>
+  <h2>⚙️ Admin Dashboard — E-Governance Portal</h2>
+  <button class="logout" onclick="logout()">Logout</button>
+</header>
+
+<div class="content">
+
+  <div class="stats">
+    <div class="stat-box"><h3 id="statTotal">-</h3><p>Total Applications</p></div>
+    <div class="stat-box"><h3 id="statPending" style="color:orange;">-</h3><p>Pending</p></div>
+    <div class="stat-box"><h3 id="statApproved" style="color:green;">-</h3><p>Approved</p></div>
+    <div class="stat-box"><h3 id="statRejected" style="color:red;">-</h3><p>Rejected</p></div>
+  </div>
+
+  <div class="filter-bar">
+    <label><strong>Filter by Status:</strong></label>
+    <select id="filterStatus" onchange="renderTable()">
+      <option value="">All</option>
+      <option value="Pending">Pending</option>
+      <option value="Approved">Approved</option>
+      <option value="Rejected">Rejected</option>
+    </select>
+    <label><strong>Search Name/ID:</strong></label>
+    <input type="text" id="searchInput" placeholder="Search..." oninput="renderTable()">
+  </div>
+
+  <div id="loading">Loading applications from database...</div>
+
+  <table id="mainTable" style="display:none;">
+    <thead>
+      <tr>
+        <th>App ID</th>
+        <th>Name</th>
+        <th>DOB / Date</th>
+        <th>Service</th>
+        <th>Submitted</th>
+        <th>Document</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="tableData"></tbody>
+  </table>
+
+  <div id="noData" class="no-data" style="display:none;">No applications found.</div>
+</div>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+
+<script>
+let allApps = [];
+
+// Load all applications from Firestore on page load
+async function loadApplications() {
+  try {
+    const snapshot = await db.collection("applications")
+      .orderBy("submittedAt", "desc")
+      .get();
+
+    allApps = snapshot.docs.map(doc => ({ docId: doc.id, ...doc.data() }));
+
+    document.getElementById("loading").style.display = "none";
+    updateStats();
+    renderTable();
+  } catch (e) {
+    document.getElementById("loading").textContent = "Error loading data: " + e.message;
+  }
+}
+
+function updateStats() {
+  document.getElementById("statTotal").textContent = allApps.length;
+  document.getElementById("statPending").textContent = allApps.filter(a => a.status === "Pending").length;
+  document.getElementById("statApproved").textContent = allApps.filter(a => a.status === "Approved").length;
+  document.getElementById("statRejected").textContent = allApps.filter(a => a.status === "Rejected").length;
+}
+
+function renderTable() {
+  const filterStatus = document.getElementById("filterStatus").value;
+  const search = document.getElementById("searchInput").value.toLowerCase();
+
+  let filtered = allApps.filter(app => {
+    const matchStatus = !filterStatus || app.status === filterStatus;
+    const matchSearch = !search || app.name.toLowerCase().includes(search) || app.id.toLowerCase().includes(search);
+    return matchStatus && matchSearch;
+  });
+
+  const tbody = document.getElementById("tableData");
+  tbody.innerHTML = "";
+
+  if (filtered.length === 0) {
+    document.getElementById("mainTable").style.display = "none";
+    document.getElementById("noData").style.display = "block";
+    return;
+  }
+
+  document.getElementById("mainTable").style.display = "table";
+  document.getElementById("noData").style.display = "none";
+
+  filtered.forEach(app => {
+    const submittedDate = app.submittedAt
+      ? new Date(app.submittedAt.seconds * 1000).toLocaleDateString("en-IN")
+      : "N/A";
+
+    tbody.innerHTML += `
+      <tr>
+        <td><strong>${app.id}</strong></td>
+        <td>${app.name}</td>
+        <td>${app.dob || app.date || "-"}</td>
+        <td>${app.service}</td>
+        <td>${submittedDate}</td>
+        <td>${app.userFile ? `<a href="${app.userFile}" download>📄 Download</a>` : "No File"}</td>
+        <td class="status-${app.status}">${app.status}${app.reason ? '<br><small style="color:#888">' + app.reason + '</small>' : ''}</td>
+        <td>
+          <button class="approve-btn" onclick="updateStatus('${app.id}','Approved','')">✅ Approve</button>
+          <button class="reject-btn" onclick="rejectApp('${app.id}')">❌ Reject</button>
+          <br>
+          <label class="cert-upload">📎 Upload Cert:
+            <input type="file" style="font-size:11px;" onchange="uploadCertificate(event,'${app.id}')">
+          </label>
+          ${app.certificate ? `<br><a href="${app.certificate}" download style="color:green;font-size:12px;">📥 Cert Ready</a>` : ""}
+          <br>
+          <button class="delete-btn" onclick="deleteApp('${app.id}')">🗑 Delete</button>
+        </td>
+      </tr>`;
+  });
+}
+
+async function updateStatus(appId, status, reason) {
+  await db.collection("applications").doc(appId).update({ status, reason });
+  const app = allApps.find(a => a.id === appId);
+  if (app) { app.status = status; app.reason = reason; }
+  updateStats();
+  renderTable();
+}
+
+function rejectApp(appId) {
+  const reason = prompt("Enter rejection reason:");
+  if (reason !== null) updateStatus(appId, "Rejected", reason);
+}
+
+async function uploadCertificate(event, appId) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = async function () {
+    await db.collection("applications").doc(appId).update({ certificate: reader.result });
+    const app = allApps.find(a => a.id === appId);
+    if (app) app.certificate = reader.result;
+    alert("Certificate uploaded successfully!");
+    renderTable();
+  };
+  reader.readAsDataURL(file);
+}
+
+async function deleteApp(appId) {
+  if (!confirm("Are you sure you want to delete this application?")) return;
+  await db.collection("applications").doc(appId).delete();
+  allApps = allApps.filter(a => a.id !== appId);
+  updateStats();
+  renderTable();
+}
+
+function logout() {
+  window.location.href = "index.html";
+}
+
+loadApplications();
+</script>
+</body>
+</html>
